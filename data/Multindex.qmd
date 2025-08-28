@@ -1,0 +1,52 @@
+---
+title: "**Manuplating Multindex DataFrames**"
+author: Steve Leo
+date: today
+
+format:
+  pdf:
+    documentclass: article
+    geometry:
+        - a4paper
+        - margin=1in
+    toc: false
+    number-sections: true
+    colorlinks: true
+
+pdf-engine: xelatex
+
+highlight-style: ayu
+code-block-bg: true
+code-block-border-left: "#31BAE9"
+
+include-in-header: 
+  text: |
+    \usepackage{fvextra}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{breaklines,commandchars=\\\{\}}
+---
+
+# Introduction
+When we download price series of multiple stocks, we often obtain a multindex DataFrame.
+
+```{python}
+#| warning: False
+#| label: tbl-multindx-by-column
+#| tbl-cap: "A Multindex DataFrame Grouped by Price Types"
+
+import yfinance as yf
+
+tickers = ['NVDA', 'TSLA']
+df1 = yf.download(tickers, start="2023-12-29", end="2024-12-31", progress=False)
+
+df1.round(2)
+```
+
+```{python}
+#| warning: False
+#| label: tbl-multindx-by-ticker
+#| tbl-cap: "A Multindex DataFrame Grouped by Stock Tickers"
+
+df2 = yf.download(tickers, start="2023-12-29", end="2024-12-31", progress=False, group_by='ticker')
+
+df2.round(2)
+```
