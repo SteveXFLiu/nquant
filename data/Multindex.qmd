@@ -111,3 +111,12 @@ df2.columns
 Now we need to convert these multindex Dataframes to usual forms to perform further computations and statistics.
 
 # Accessing Columns
+The full index leads to the specific column. We can extract it as a Series:
+
+```{python}
+nvda_close = df1[('Close', 'NVDA')]
+
+nvda_close
+```
+
+It is convenient to convert it to a DataFrame:
