@@ -6,4 +6,6 @@ uv.lock
 *.pdf
 *.html
 
-tests/test_files
+*_files
+*.log
+*.tex
