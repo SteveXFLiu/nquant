@@ -8,7 +8,7 @@ format:
     documentclass: article
     geometry:
         - a4paper
-        - margin=1in
+        - margin=1in 
     toc: false
     number-sections: true
     colorlinks: true
@@ -16,6 +16,23 @@ format:
 pdf-engine: xelatex
 
 highlight-style: ayu
+code-block-bg: true
+code-block-border-left: "#31BAE9"
+
+include-in-header: 
+      text: |
+        \usepackage{fontspec}
+        \usepackage{xunicode}
+        \usepackage{xltxtra}
+        \usepackage{fvextra}
+
+        \setmainfont[Scale=0.85]{Miller Text}
+        \setmonofont{Hack Nerd Font Mono}
+
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{
+          commandchars=\\\{\},
+          breaklines, breaknonspaceingroup, breakanywhere
+        }
 ---
 
 # Introduction
