@@ -1,0 +1,9 @@
+.DS_Store
+
+.python-version
+uv.lock
+
+*.pdf
+*.html
+
+tests/test_files
