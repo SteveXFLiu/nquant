@@ -1,0 +1,600 @@
+---
+title: "**Built-In Data Structures of Python**"
+author: Steve Leo
+date: today
+
+format:
+  pdf:
+    documentclass: article
+    geometry:
+        - a4paper
+        - margin=1in 
+    toc: false
+    number-sections: true
+    colorlinks: true
+
+pdf-engine: xelatex
+
+highlight-style: ayu
+code-block-bg: true
+code-block-border-left: "#31BAE9"
+
+include-in-header: 
+      text: |
+        \usepackage{fontspec}
+        \usepackage{xunicode}
+        \usepackage{xltxtra}
+        \usepackage{fvextra}
+
+        \setmainfont{Miller Text}
+        \setmonofont{Hack Nerd Font Mono}
+
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{
+          commandchars=\\\{\},
+          breaklines, breaknonspaceingroup, breakanywhere
+        }
+---
+
+# Tuple
+A tuple is a *fixed-length, immutable* sequence of Python objects which, once assigned, cannot be changed.
+
+## Creating Tuples
+The easiest way to create a tuple is with a comma-separated sequence of values wrapped in parentheses, while in many contexts the parentheses can be ommitted:
+```{python}
+tup1 = (1, 2, 3)
+tup2 = 1, 2, 3
+
+tup1 == tup2
+```
+
+Any sequence or iterator can be converted to a tuple:
+```{python}
+tup = tuple('string')
+
+tup
+```
+
+## Accessing Elements and Immutability of Tuples
+Elements can be accessed with square brackets as with most other sequence types:
+```{python}
+tup[0]
+```
+
+Here is an example of a tuple of tuples:
+```{python}
+tup_nested = (4, 5, 6), (7, 8)
+
+tup_nested[-1]
+```
+
+Once a tuple is created, it's not possible to modify the objects stored in it:
+```{python}
+#| error: true
+
+tup_mixed = tuple(['foo', [1, 2], True])
+
+tup_mixed[-1] = False
+```
+But if an object inside a tuple is mutable, we can modify it in place:
+```{python}
+tup_mixed[1].append(3)
+
+tup_mixed
+```
+
+## Concatenating Tuples
+Tuples can be concatenated with the `+` operator:
+```{python}
+(4, None, 'foo') + (6, 0) + ('bar',)
+```
+
+Multiplying a tuple by an integer has the effect of concatenating that many copies of the tuple:
+```{python}
+('foo', 'bar') * 3
+```
+
+## Unpacking Tuples
+If we assign to a tuple-like expression of variables, Python will attempt to *unpack* the values:
+```{python}
+tup = (1, 2, 3)
+a, b, c = tup
+
+b
+```
+It is also the case with nested tuples:
+```{python}
+tup = 4, 5, (6, 7)
+a, b, (c, d) = tup
+
+d
+```
+
+We can swap variable names *Pythonically* with this functionality:
+```{python}
+a, b = 1, 2
+b, a = a, b
+
+b
+```
+
+A common use of variable unpacking is iterating over sequences of tuples or lists:
+```{python}
+seq = [(1, 2, 3), (4, 5, 6), (7, 8, 9)]
+
+for a, b, c in seq:
+    print(f'a={a}, b={b}, c={c}')
+```
+
+To capture an arbitrarily long list of positional arguments, we can use `*rest`, or just `*_` for convenience (here the `rest` or `_` is something to be discarded):
+```{python}
+values = 1, 2, 3, 4, 5
+a, b, *rest = values
+
+rest
+```
+
+## Tuple Methods
+The `count` method returns the number of occurrences of a value:
+```{python}
+tup = (1, 2, 2, 2, 3, 4, 2)
+
+tup.count(2)
+```
+
+The `index` method returns the first occurrence of the given element from the tuple:
+```{python}
+tup.index(2)
+```
+
+# List
+In contrast with tuples, lists are *variable length* and their contents can be modified in place, or lists are *mutable*.
+
+## Creating Lists
+We can create lists using square brackets or using the `list` type function:
+```{python}
+a_tuple = (0, "foo", None, True)
+a_list = list(a_tuple)
+
+b_list = [0, "foo", None, True]
+
+a_list == b_list
+```
+
+A frequently used function of `list` is as a way to materialize an iterator or generator expression:
+```{python}
+gen = range(10)
+
+list(gen)
+```
+
+## Accessing, Adding, and Removing Elements
+Elements of a list can also be accessed with square brackets:
+```{python}
+a_list[1]
+```
+
+Elements can be appended to the end of the list with the `append` method:
+```{python}
+a_list.append("bar")
+
+a_list
+```
+
+Using `insert` we can insert an element to a specific location in the list (the insertion index must be between 0 and the length of the list, inclusive):
+```{python}
+a_list.insert(2, "bar")
+
+a_list
+```
+
+Elements can be removed by value with the method `remove`, which locates the first such value and removes it from the list:
+```{python}
+a_list.remove("bar")
+
+a_list
+```
+
+Another method removing elements is `pop`, which removes and returns an element at a particular index:
+```{python}
+a_list.insert(2, "bar")
+
+a_list.pop(2)
+```
+```{python}
+a_list
+```
+
+To check if a list contains a value, we can use the `in` keyword:
+```{python}
+0 in a_list
+```
+```{python}
+True not in a_list
+```
+
+## Concatenating and Combining Lists
+Adding two lists together with `+` concatenates them:
+```{python}
+[4, None, "foo"] + [7, 8, (2, 3)]
+```
+
+We can append multiple elements to an already defined list with the `extend` method:
+```{python}
+x = [ 4, None, "foo"]
+x.extend([7, 8, (2, 3)])
+
+x
+```
+The `extend` method combines two lists to one, while the `append` method adds an element to the end of the list:
+```{python}
+y = [4, None, "foo"]
+y.append([7, 8, (2, 3)])
+
+y
+```
+
+Note that list concatenation by addition is a comparatively expensive operation since a new list must be created and the objects copied over. Using `extend` to append elements to an existing list, especially if we are building a large list, is usually preferable. For example:
+```{python}
+#| eval: false
+
+symbols = []
+
+for symbol in stock_list:
+    symbols.extend(symbol)
+```
+
+## Sorting
+We can sort a list in place (without creating a new object) by calling its `sort` function:
+```{python}
+#| eval: false
+
+list.sort(reverse = False|True, key)
+```
+For example:
+```{python}
+a = ["foo", "bar", "he", "names"]
+a.sort(reverse = True, key=len)
+
+a
+```
+
+## Slicing
+A slice notation, which in its basic form `[start:stop]`, can be used to select sections of most sequence types. While the element at the `start` index is included, the `stop` index is *not included*, so that the number of elements in the result is `stop - start`:
+```{python}
+seq = list(range(10))
+
+seq[3:7]    # Index 3 to 6 (7 not included)
+```
+Either the `start` or `stop` can be omitted (evaluated as `None` actually), in which case they default to the start and the end of the sequence, respectively:
+```{python}
+seq[:5]     # Index 0 to 4 (5 not included)
+```
+```{python}
+seq[6:]     # Index 6 to the end
+```
+Negative indices slice the sequence relative to the end:
+```{python}
+seq[-6:-2]  # Index 10-6=4 to 7 (10-2=8, not included)
+```
+
+@fig-slicing gives a helpful illustration of the above slicings with positive and negative integers.
+
+```{python}
+#| echo: false
+#| fig-cap: "Illustration of Python Slicing Conventions"
+#| label: fig-slicing
+
+import matplotlib.pyplot as plt
+from matplotlib.patches import  Rectangle
+
+seq = list(range(10))
+
+params = {          # subplot_arrangement: (slicing_start, slicing_end)
+    411: (3, 7),
+    412: (None, 5),
+    413: (6, None),
+    414: (-6, -2)
+}
+
+fig = plt.figure()
+
+for position, slicing in params.items():
+    plt.subplot(position)
+    
+    ax = plt.gca()
+    ax.set_xlim([-1, len(seq)])
+    ax.set_ylim([0, 1])
+    
+    plt.text(-1, 0.5, f'seq[{'' if slicing[0]== None else slicing[0]}:{'' if slicing[1]==None else slicing[1]}]', fontfamily="monospace", fontsize=10, verticalalignment="center", horizontalalignment="right")
+    
+    for i in seq:
+        if i in seq[slicing[0]:slicing[1]]:
+            rect = Rectangle((i, 0), width=1, height=1, facecolor="orange", edgecolor="black")
+        else:
+            rect = Rectangle((i, 0), width=1, height=1, facecolor="white", edgecolor="black")    
+        ax.add_patch(rect)
+    
+        plt.text(i + 0.5, 0.5, i, fontfamily="times", fontsize=12, verticalalignment="center", horizontalalignment="center")
+        
+        plt.text(i + 0.1, 0.1, -(10-i), color="green", fontfamily="times", fontstyle="italic", fontsize=8, verticalalignment="bottom", horizontalalignment="left")
+    
+        plt.text(i + 0.1, 0.9, i, color="blue", fontfamily="times", fontstyle="italic", fontsize=8, verticalalignment="top", horizontalalignment="left")
+        
+    plt.axis('equal')
+    plt.axis('off')
+
+plt.show()
+```
+
+A `step` can also be used after a second colon in the slicing:
+```{python}
+seq[::2]
+```
+If a negative integer is passed to `step`, it will have the useful effect
+of reversing the list:
+```{python}
+seq[::-1]   # A useful trick to reverse the entire list
+```
+```{python}
+seq[::-2]
+```
+
+# Dictionary
+A dictionary stores a collection of *key-value* pairs, where *key* and *value* are both Python objects. Each key is associated with a value so that a value can be conveniently retrieved, inserted, modified, or deleted given a particular key.
+
+In other programming languages, dictionaries are sometimes called *hash maps* or *assotiative arrays*.
+
+## Creating Dictionaries
+To create a dictionary, we can use curly braces `{}` and colons to separate keys and values:
+```{python}
+d = {"a": "some value", "b": [1, 2, 3, 4]}
+
+d
+```
+
+It's common to occasionally end up with two sequences that we want to pair up element-wise into a dictionary, in which case the `zip` function is especially useful:
+```{python}
+#| eval: false
+
+dict(zip(key_list, value_list))
+```
+For example:
+```{python}
+keys = ["a", "b", "c"]
+values = [1, 2, 3]
+
+d = dict(zip(keys, values))
+
+d
+```
+
+## Valid Dictionary Key Types
+WHile the values of a dictionary can be any Python object, the keys generally have to be *immutable* objects such as scalar types (int, float, string) or tuples (all the objects in the tuple need to be immutable, too). Or technically, the keys should be *hashable*.
+
+We can check whether an object is hashable with the `hash` function:
+```{python}
+hash("string")
+```
+```{python}
+hash((1, 2, (3, 4)))
+```
+```{python}
+#| error: true
+hash((1, 2, [3, 4]))    # Unhashable because the tuple contains a mutable list
+```
+
+To use a list as a key, one option is to convert it to a tuple:
+```{python}
+d_eg = {tuple([1, 2, 3]): 0}
+
+d_eg
+```
+
+## Accessing, Adding, and Removing Elements
+The values in a dictionary can be accessed with the syntax `dictName[key]`:
+```{python}
+d["b"]
+```
+
+We can check whether a key is contained in a dictionary using `in`:
+```{python}
+"x" not in d
+```
+
+The `keys` and `values` methods return the keys and values as `dict_keys` and `dict_values` objects, respectively:
+```{python}
+d.keys()
+```
+```{python}
+list(d.values())
+```
+And the `items` method returns both the keys and the values as a `dict_items` object, which contains pair-wise tuples of `(key, value)`:
+```{python}
+d.items()
+```
+
+A common use of the `items` method is iterating over a dictionary:
+```{python}
+#| eval: false
+
+for key, value in dictName.items():
+    ...
+```
+For example:
+```{python}
+for letter, num in d.items():
+    print(f'{letter} = {num}')
+```
+
+Values in a dictionary can be modified with the syntax `dictName[key] = new_value`:
+```{python}
+d["a"] = 0
+
+d
+```
+or with the `update` method:
+```{python}
+d.update({"b": 1, "c": 2})
+
+d
+```
+
+If the keys in above syntaxes do not exist in the dictionary, new key-value pairs will be added at the end of the dictionary (dictionaries do not have the `append` method):
+```{python}
+d["x"] = 5
+
+d
+```
+```{python}
+d.update({"y": 6})
+
+d
+```
+
+To remove a key-value pair, we can use the `del` keyword:
+```{python}
+del d["y"]
+
+d
+```
+Or we can use the `pop` method, which returns the value and deletes the key at the same time:
+```{python}
+d.pop("x")
+```
+```{python}
+d
+```
+
+## Default Values
+Suppose we already have a dictionary `d_old`, and need to creat a new dictionary `d_new` with the following logic:
+```{python}
+#| eval: false
+if key_new in d_old:
+    value_new = d_old[key_new]
+else:
+    value_new = default_value
+```
+We can use the `get` method:
+```{python}
+d_old = {"x": 1, "y": 2}
+d_new = {}
+keys_new = ("x", "y", "a", "b")
+default_value = 0
+
+for key in keys_new:
+    d_new[key] = d_old.get(key, default_value)
+
+d_new
+```
+
+Another useful method is `setdefault`. It returns the value of the item with the specified key. If the key does not exist, it will insert the key, with the specified value.
+
+Suppose we want to categorize a list of words by their first letters:
+```{python}
+words = ["apple", "bat", "bar", "atom", "book", "cat"]
+by_letter = {}
+
+for word in words:
+    letter = word[0]
+    by_letter.setdefault(letter, []).append(word)
+
+by_letter
+```
+
+# Set
+A set is an *unordered* collection of *unique* elements.
+
+## Creating Sets
+A set can be created via the a set literal with curly braces:
+```{python}
+{1, 1, 2, 3, 3, 3}
+```
+or via the `set` function:
+```{python}
+set([1, 1, 2, 3, 3, 3])
+```
+
+We can also create a new set by copying an existed one using the method `copy`:
+```{python}
+s1 = {"a", "b", "c"}
+s2 = s1.copy()
+
+s2
+```
+
+## Adding and Removing Elements
+To add an element to a set, use the `add` method:
+```{python}
+s = {1, 2, 3}
+s.add(0)
+
+s
+```
+
+To remove a specified element form a set, we can use the `remove` method:
+```{python}
+s.remove(3)
+
+s
+```
+
+Another method `pop` removes a *random* element and returns it:
+```{python}
+s.pop()
+```
+
+The `clear` method resets the set to an empty state, discarding all of its elements:
+```{python}
+s.clear()
+
+s
+```
+
+## Set Operations
+Sets support mathematical binary set operations. @tbl-set_operations lists these operations.
+
+```{=latex}
+\renewcommand{\arraystretch}{1.2}
+\begin{table}[h!]
+\centering
+\caption{Binary Set Operations}{#tbl-set_operations}
+\begin{tabular}{lll}
+\hline
+Mathematical Expression & Python Function & Alternative Python Syntax \\
+\hline
+$A \cup B$ & \texttt{A.union(B)} & \texttt{A | B} \\
+$A \cap B$ & \texttt{A.intersection(B)} & \texttt{A \& B} \\
+\\
+$A - B$ & \texttt{A.difference(B)} & \texttt{A - B} \\
+$A \triangle B$ & \texttt{A.symmetric\_difference(B)} & \texttt{A \^{} B} \\
+\\
+$A \subseteq B$ & \texttt{A.issubset(B)} & \texttt{A <= B} \\
+$A \supseteq B$ & \texttt{A.issuperset(B)} & \texttt{A >= B} \\
+$A \cap B = \emptyset$ & \texttt{A.isdisjoint(B)} & N/A \\
+\hline
+\end{tabular}
+\end{table}
+```
+
+When using the binary set operators, both objects must be sets. If we pass an input that is not a set, Python will convert it to a set before executing the operation.
+
+For binary operations union, intersection, difference, and symmetric difference on very large sets, it is usually more efficient to replace the contents of a set with the result than to generate a new set. This can be fulfilled with the in-place counterparts of these operators. See @tbl-set_operations_in_place.
+
+```{=latex}
+\renewcommand{\arraystretch}{1.2}
+\begin{table}[h!]
+\centering
+\caption{In-Place Binary Set Operations}{#tbl-set_operations_in_place}
+\begin{tabular}{lll}
+\hline
+Mathematical Expression & Python Function & Alternative Python Syntax \\
+\hline
+$A \leftarrow \left(A \cup B\right)$ & \texttt{A.update(B)} & \texttt{A |= B} \\
+$A \leftarrow \left(A \cap B\right)$ & \texttt{A.intersection\_update(B)} & \texttt{A \&= B} \\
+\\
+$A \leftarrow \left(A - B\right)$ & \texttt{A.difference\_update(B)} & \texttt{A -= B} \\
+$A \leftarrow \left(A \triangle B\right)$ & \texttt{A.symmetric\_difference\_update(B)} & \texttt{A \^{} = B} \\
+\hline
+\end{tabular}
+\end{table}
+```
