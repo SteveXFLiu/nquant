@@ -39,6 +39,7 @@ include-in-header:
 When we download price series of multiple stocks, we usually obtain a multindex DataFrame. For example, use `yfinance.download()` to get the daily prices of NVDA and TSLA in 2024:
 
 ```{python}
+# Import packages needed in this document
 import yfinance as yf
 import pandas as pd
 ```
@@ -55,15 +56,17 @@ df1 = yf.download(tickers, start="2023-12-29", end="2024-12-31", progress=False)
 df1.round(2)
 ```
 
-This DataFrame is called *multindex* because each column has *two* indexes, the price type (Open/High/Low/Close/Volume) and the stock ticker (NVDA/TSLA). Actually, each column is indexed by a combination of these two indeces. The first column (the second column in @tbl-multindx-by-column) is indexed by Close and NVDA, the second column is indexed by Close and TSLA, and so on:
-```{python}
-df1.columns
-```
-The complete header of @tbl-multindx-by-column should be:
+This DataFrame is called *multindex* because each column has *two* indexes, the price type (Open/High/Low/Close/Volume) and the stock ticker (NVDA/TSLA). Actually, each column is indexed by a combination of these two indeces. The first column (the second column in @tbl-multindx-by-column) is indexed by Close and NVDA, the second column is indexed by Close and TSLA, and so on. The complete header of @tbl-multindx-by-column should be:
 
 | Price Ticker | Close NVDA | Close TSLA | High NVDA | High TSLA | Low NVDA | Low TSLA | Open NVDA | Open TSLA | Volume NVDA | Volume TSLA |
 |--------------|:----------:|:----------:|:---------:|:---------:|:--------:|:--------:|:---------:|:---------:|:-----------:|:-----------:|
 | Date         |            |            |           |           |          |          |           |           |             |             |
+
+The indexes of columns are stored in tuples: 
+
+```{python}
+df1.columns
+```
 
 It is helpful to understand this multindex DataFrame further if we generate a similar one manually:
 
@@ -110,8 +113,8 @@ df2.columns
 
 Now we need to convert these multindex Dataframes to usual forms to perform further computations and statistics.
 
-# Accessing Columns
-The full index leads to the specific column. We can extract it as a Series:
+# Accessing A Specific Column
+A full index leads to a specific column, which is a time series of open/high/low/close prices or volumes for a stock. We can extract it as a Series:
 
 ```{python}
 nvda_close = df1[('Close', 'NVDA')]
