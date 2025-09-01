@@ -42,6 +42,16 @@ When we download price series of multiple stocks, we usually obtain a multindex 
 # Import packages needed in this document
 import yfinance as yf
 import pandas as pd
+import matplotlib.pyplot as plt
+
+# Set plt style
+plt.rcParams['font.family'] = 'Palatino'
+plt.rcParams['font.size'] = 8
+plt.rcParams['axes.labelsize'] = 8
+plt.rcParams['xtick.labelsize'] = 8
+plt.rcParams['ytick.labelsize'] = 8
+plt.rcParams['lines.linewidth'] = 1
+plt.rcParams["axes.xmargin"] = 0
 ```
 
 ```{python}
@@ -114,12 +124,23 @@ df2.columns
 Now we need to convert these multindex Dataframes to usual forms to perform further computations and statistics.
 
 # Accessing A Specific Column
-A full index leads to a specific column, which is a time series of open/high/low/close prices or volumes for a stock. We can extract it as a Series:
+A full index tuple leads to a specific column, which is a time series of open/high/low/close prices or volumes for a stock. We can extract it as a Series:
 
 ```{python}
 nvda_close = df1[('Close', 'NVDA')]
 
 nvda_close
 ```
+It is straightfoward to generate a daily return series and time series line plots with it: 
 
-It is convenient to convert it to a DataFrame:
+```{python}
+#| warning: false
+#| label: fig-nvda-close
+#| fig-cap: "Daily Close Prices and Returns of NVDA in 2024"
+
+fig, (ax1, ax2) = plt.subplots(2, sharex=True)
+ax1.plot(nvda_close)
+ax2.plot(nvda_close.pct_change())
+```
+
+# Accessing Multiple Columns
