@@ -1,0 +1,115 @@
+---
+title: "**A Test of Quarto with uv**"
+author: Steve Leo
+date: today
+
+format:
+  pdf:
+    documentclass: article
+    geometry:
+        - a4paper
+        - margin=1in 
+    toc: false
+    number-sections: true
+    colorlinks: true
+
+pdf-engine: xelatex
+
+highlight-style: ayu
+code-block-bg: true
+code-block-border-left: "#31BAE9"
+
+include-in-header: 
+      text: |
+        \usepackage{fontspec}
+        \usepackage{xunicode}
+        \usepackage{xltxtra}
+        \usepackage{fvextra}
+
+        \setmainfont[Scale=0.85]{Miller Text}
+        \setmonofont{Hack Nerd Font Mono}
+
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{
+          commandchars=\\\{\},
+          breaklines, breaknonspaceingroup, breakanywhere
+        }
+---
+
+# Introduction
+This is a test of Quarto with the Python environment managed with uv, and with the systematic R environment.
+
+# Mathematical Symbols
+Quarto supports mathematical symbols perfectly:
+$$
+F(x) = \int_{-\infty}^{+\infty} f(x)dx
+$${#eq-example}
+
+# Python Code
+Here is a simple code example in Python:
+```{python}
+#| warning: false
+#| fig-cap: "Meat Production Over Time"
+
+from plotnine import (
+    ggplot,
+    aes,
+    geom_line,
+    facet_wrap,
+    labs,
+    scale_x_datetime,
+    element_text,
+    theme_538
+)
+from plotnine.data import meat
+
+meat_long = meat.melt(
+    id_vars="date",
+    value_vars=["beef", "veal", "pork", "lamb_and_mutton", "broilers", "turkey"],
+    var_name="animal",
+    value_name="weight"
+).dropna()
+
+def titled(strip_title):
+    return " ".join(s.title() if s != "and" else s for s in strip_title.split("_"))
+
+p = (
+    ggplot(meat_long, aes("date", "weight", color="animal"))
+    + geom_line(size=.5, show_legend=False)
+    + facet_wrap("animal", labeller=titled)
+    + scale_x_datetime(date_breaks="20 years", date_labels="%Y")
+    + labs(
+        x="Date",
+        y="Weight (million pounds)",
+        title="Meat Production"
+    )
+    + theme_538(base_size=9)
+)
+
+p.show()
+```
+# R Code
+And here is an example of plotting with R:
+
+```{r setup, include = FALSE}
+# To make both Pthon and R scripts in the same document work
+
+library(reticulate)
+use_python("../.venv/bin/python")
+```
+
+```{R}
+#| warning: false
+#| fig-cap: "Night price distribution of Airbnb appartements"
+
+library(ggplot2)
+library(dplyr)
+
+# Load dataset from github
+data <- read.table("https://raw.githubusercontent.com/holtzy/data_to_viz/master/Example_dataset/1_OneNum.csv", header=TRUE)
+
+# Make the histogram
+data %>%
+  filter( price<300 ) %>%
+  ggplot( aes(x=price)) +
+    geom_density(fill="#69b3a2", color="#e9ecef", alpha=0.6)
+```
