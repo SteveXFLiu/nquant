@@ -144,3 +144,16 @@ ax2.plot(nvda_close.pct_change())
 ```
 
 # Accessing Multiple Columns
+More frequently, we need to extract multiple columns from the above multindex DataFrame to generate a new DataFrame. For example, we need a data set including only daily close prices of both NVDA and TSLA in 2024.
+
+Of course we can use the complete list of column index tuples to refer to these columns:
+
+```{python}
+#| warning: false
+#| label: tbl-close
+#| tbl-cap: "Daily Close Prices of NVDA and TSLA in 2024"
+
+close = df1.loc[:, [('Close', 'NVDA'), ('Close', 'TSLA')]]
+
+close
+```
