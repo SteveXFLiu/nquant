@@ -1,0 +1,195 @@
+---
+title: "**Descriptive Statistics in Financial Econometrics**"
+author: Steve Leo
+date: today
+
+format:
+  pdf:
+    documentclass: article
+    geometry:
+        - a4paper
+        - margin=1in 
+    toc: false
+    number-sections: true
+    colorlinks: true
+
+pdf-engine: xelatex
+
+highlight-style: ayu
+code-block-bg: true
+code-block-border-left: "#31BAE9"
+
+include-in-header: 
+      text: |
+        \usepackage{fontspec}
+        \usepackage{xunicode}
+        \usepackage{xltxtra}
+        \usepackage{fvextra}
+
+        \setmainfont[Scale=0.85]{Miller Text}
+        \setmonofont{Hack Nerd Font Mono}
+
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{
+          commandchars=\\\{\},
+          breaklines, breaknonspaceingroup, breakanywhere
+        }
+---
+
+# Introduction
+
+## Python Packages Needed
+In some cases, we need to display multiple outcomes at the same time, which can be fulfilled by the function `display` of `IPython.display`:
+```{python}
+from IPython.display import display
+```
+
+Of course we need the Numpy and Pandas packages to process data series and dataframes. We also need the `statistics` package to incorporate many statistical functions.
+```{python}
+import numpy as np
+import pandas as pd
+import statistics
+```
+
+To access some financial data, we use the `yfinance` package:
+```{python}
+import yfinance as yf
+```
+
+## Descriptive Statistics Table: A Realistic Example
+Let's download a price series of some stocks, "the seven sisters," from the end of 2023 to the end of 2024: 
+
+```{python}
+#| warning: False
+#| label: tbl-7sis-prices
+#| tbl-cap: "Daily Close Prices of the Seven Sisters in 2024"
+
+tickers = ['AAPL', 'AMZN', 'GOOG', 'META', 'MSFT', 'NVDA', 'TSLA']
+raw = yf.download(tickers, start="2023-12-29", end="2024-12-31")
+
+sis7p = raw['Close'].round(2).reset_index()
+sis7p.columns.name = None
+
+sis7p
+```
+
+We can calculate their daily returns:
+```{python}
+#| warning: False
+#| label: tbl-7sis-returns
+#| tbl-cap: "Daily Returns of the Seven Sisters in 2024"
+
+sis7r = sis7p.copy()
+sis7r[tickers] = sis7p[tickers].pct_change()
+sis7r = sis7r.dropna().round(4)
+
+sis7r
+```
+
+Now it is easy to obtain the descriptive statistics table of the daily return of these stocks, with just the simple `describe()` method of the DataFrame:
+```{python}
+#| warning: False
+#| label: tbl-7sis-returns-descriptive-stats
+#| tbl-cap: "Descriptive Statistics of the Seven Sisters Daily Returns in 2024"
+
+desc = sis7r[tickers].describe().T.round(4)
+desc['count'] = desc['count'].astype(int)
+
+desc
+```
+
+# Measures of Central Tendency
+The average value (or typical value) of a series is usually used to measure its location or central tendency.
+
+## The Arithmetic Mean
+The most well known average value is the arithmetic mean, or the mean for a series $r_i$ of length $N$:
+$$
+\bar{r} = \frac{1}{N}\sum_{i=1}^N {r_i} 
+$${#eq-arithmetic-mean}
+
+It is the most familiar method with the most easily used formula, and it has desirable econometric properities. But it can be unduly affected by extreme values.
+
+### Calculation of the Arithmetic Mean
+In Python, we can use the `mean()` method for both array of Numpy and Series of Pandas:
+```{python}
+arr = np.array([1, 2, 3, 4, 5])
+series = pd.Series([1, 2, 3, 4, 5])
+
+display(arr.mean())
+display(series.mean())
+```
+A more general method to obtain the mean of a set of numbers is `statistics.mean()`, which can be applied to various datatypes and keep the result the same type as the raw data:
+```{python}
+tup = (1, 2, 3, 4, 5)
+lis = [1, 2, 3, 4, 5]
+st = {1, 2, 3, 4, 5}
+
+display(statistics.mean(tup))
+display(statistics.mean(lis))
+display(statistics.mean(st))
+display(statistics.mean(arr))
+display(statistics.mean(series))
+```
+
+For a DataFrame, the `mean()` method returns the column means:
+```{python}
+sis7r[tickers].mean()
+```
+
+## The Geometric Mean
+The geometric mean of a series $x_i$ is usually the $N$th root of the product of the $N$ numbers:
+$$
+\bar{x}_G = \left(\prod_{i=1}^N {x_i}\right)^{\frac{1}{N}}
+$${#eq-geometric-mean}
+For computational convenience, it could also be writen in logarithm form:
+$$
+\bar{x}_G = \exp{\left(\frac{1}{N}\sum_{i=1}^N\log{x_i}\right)}
+$${#eq-geometric-mean-log}
+
+But in finance, we usually deal with returns or percentage changes rather than prices or actural values, thus we use a slightly different approach:
+$$
+\bar{r}_G = \left[\prod_{i=1}^N {\left(1 + r_i\right)}\right]^{\frac{1}{N}} - 1
+$${#eq-return-geometric-mean}
+or equivalently:
+$$
+\bar{r}_G = \exp{\left[\frac{1}{N}\sum_{i=1}^N {\log{\left(1 + r_i\right)}}\right]} - 1
+$${#eq-return-geometric-mean-log}
+
+An important application of the geometric mean is to calculate the accumulated average return, in which case the arithmetic averaging implicitly ignores the compounding effect and assumes that we alwary had the original investment amount at the start of each new period.
+
+It can be shown that the geometric return is alway less than or equal to the arithmetic return. There is an approximate relationship between the two means:
+$$
+\bar{r}_G \approx \bar{r} - \frac{1}{2}\sigma^2
+$${#eq-return-geometric-arithmetic-means}
+where $\sigma^2$ is the variance of the returns. It is clear that the higher the volatility, the greater will be the difference between the two average returns. The geometric mean is also less affected by extreme outliers than the arithmetic mean.
+
+### Calculation of the Geometric Mean
+In Python, 
+
+## The Median
+The median is the middle value in a series when the elements are arranged in an ascending order. 
+
+The median is often considered as a usefule representation of the typical value of a series, and it is robust to outliers.
+
+But the median has the drawback that its calculation is based essentially on one observation, which implies that the changes of the low or high values are not considered.
+
+### Calculation of the Median
+Both Numpy and Pandas objectives have 
+
+## The Mode
+The mode measures the most frequently occurring value in a series.
+
+The mode has the advantage that it is guaranteed to be one of the observations. It is a representation of the observational samples. A commonly presented example of why the mode can be useful is that of a shoemaker who needs to know the number of pairs of shoes of each size to produce and asks his apprentice to give him one number that summarises the sizes of people's feet.
+
+The mode is not suitable for continuous, non-integer data or for distributions with two or more peaks.
+
+### Calculation of the Mode
+In Python, we can use the function `statistics.mode()` to obtain the mode of a series of numbers. If there are multiple modes (i.e., multiple values with the same highest frequency), `statistics.mode()` returns the first one encountered in the data sequence:
+```{python}
+arr_one_mode = np.array([1, 2, 2, 3, 4, 5])
+arr_multiple_mode = np.array([1, 2, 3, 4, 5])
+
+display(statistics.mode(arr_one_mode))
+display(statistics.mode(arr_multiple_mode))
+```
+
+# Measures of Spread
