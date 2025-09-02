@@ -13,11 +13,11 @@ format:
     number-sections: true
     colorlinks: true
 
-pdf-engine: xelatex
-
 highlight-style: ayu
 code-block-bg: true
 code-block-border-left: "#31BAE9"
+
+pdf-engine: xelatex
 
 include-in-header: 
       text: |
@@ -26,7 +26,7 @@ include-in-header:
         \usepackage{xltxtra}
         \usepackage{fvextra}
 
-        \setmainfont[Scale=0.85]{Miller Text}
+        \setmainfont{Miller Text}
         \setmonofont{Hack Nerd Font Mono}
 
         \DefineVerbatimEnvironment{Highlighting}{Verbatim}{
