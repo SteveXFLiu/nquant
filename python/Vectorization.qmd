@@ -77,8 +77,14 @@ v = [1, 2, 3]
 
 2*v
 ```
+In pure Python, we need loops to complete the computation:
+```{python}
+v2 = [2 * i for i in v]
 
-We need Python packages `NumPy` and `pandas` to implement vectorization.
+v2
+```
+
+We need Python packages `NumPy` and `pandas` to implement vectorization, quickly and conviently.
 ```{python}
 import numpy as np
 import pandas as pd
