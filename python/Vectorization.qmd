@@ -1,0 +1,91 @@
+---
+title: "**Vectorization in Python**"
+author: Steve Leo
+date: today
+
+format:
+  pdf:
+    documentclass: article
+    geometry:
+        - a4paper
+        - margin=1in 
+    toc: false
+    number-sections: true
+    colorlinks: true
+
+pdf-engine: xelatex
+
+highlight-style: ayu
+code-block-bg: true
+code-block-border-left: "#31BAE9"
+
+include-in-header: 
+      text: |
+        \usepackage{fontspec}
+        \usepackage{xunicode}
+        \usepackage{xltxtra}
+        \usepackage{fvextra}
+
+        \setmainfont{Miller Text}
+        \setmonofont{Hack Nerd Font Mono}
+
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{
+          commandchars=\\\{\},
+          breaklines, breaknonspaceingroup, breakanywhere
+        }
+---
+
+# Introduction
+Vectorization, or array programming, is a programming style in which operations on scalars are generalized to vectors, matrices, or even multidimensional arrays. Suppose $a$, $b$, $c$ are scalars, and $\mathbf{v}$ is a matrix:
+$$
+\mathbf{v} =
+\begin{pmatrix}
+v_{11} & v_{12} & \cdots & v_{1n}
+\\
+v_{21} & v_{22} & \cdots & v_{2n}
+\\
+\vdots & \vdots & \ddots & \vdots
+\\
+v_{m1} & v_{m2} & \cdots & v_{mn}
+\end{pmatrix}
+= 
+\begin{pmatrix}
+v_{ij}
+\end{pmatrix}
+_{mn}
+$$
+Then vectorization means:
+$$
+\begin{aligned}
+a\mathbf{v} + b &= 
+\begin{pmatrix}
+av_{ij} + b
+\end{pmatrix}
+_{mn}
+\\
+\mathbf{v}^c &= 
+\begin{pmatrix}
+{v_{ij}}^c
+\end{pmatrix}
+_{mn}
+\end{aligned}
+$$
+
+But the standard instruciton set and data model of pure Python does not generally allow for vectorization:
+```{python}
+v = [1, 2, 3]
+
+2*v
+```
+
+We need Python packages `NumPy` and `pandas` to implement vectorization.
+```{python}
+import numpy as np
+import pandas as pd
+```
+
+# Vectorization with `NumPy`
+
+# Vectorization with `pandas`
+
+# Applications in Backtestings
