@@ -70,12 +70,16 @@ _{mn}
 _{mn}
 \end{aligned}
 $$
+Or more generally, 
+$$
+f\left(\mathbf{v}\right) = \left(f\left(v_{ij}\right)\right)_{mn}
+$$
 
 But the standard instruciton set and data model of pure Python does not generally allow for vectorization:
 ```{python}
 v = [1, 2, 3]
 
-2*v
+2 * v
 ```
 In pure Python, we need loops to complete the computation:
 ```{python}
@@ -91,6 +95,46 @@ import pandas as pd
 ```
 
 # Vectorization with `NumPy`
+The `ndarray` class of `NumPy` supports vectorization as desired:
+```{python}
+arr = np.array(v)
+
+2 * arr
+```
+
+```{python}
+0.5 * arr + 1 
+```
+
+```{python}
+arr ** 2
+```
+
+Vectorization of boolean judgements are also supported:
+```{python}
+bl = np.array([0, 1, 2, 3, 0])
+
+bl > 0
+```
+
+The `ndarray` class also provides specific methods and functions that allow vectorized operations:
+```{python}
+mat = np.arange(12).reshape((4, 3))
+
+mat
+```
+
+```{python}
+mat.mean()
+```
+
+```{python}
+mat.mean(axis=0)
+```
+
+```{python}
+np.mean(mat, axis=1)
+```
 
 # Vectorization with `pandas`
 
