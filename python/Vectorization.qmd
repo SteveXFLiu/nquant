@@ -94,6 +94,11 @@ import numpy as np
 import pandas as pd
 ```
 
+We also use `yfinance` package to download some data:
+```{python}
+import yfinance as yf
+```
+
 # Vectorization with `NumPy`
 The `ndarray` class of `NumPy` supports vectorization as desired:
 ```{python}
@@ -137,5 +142,35 @@ np.mean(mat, axis=1)
 ```
 
 # Vectorization with `pandas`
+The `DataFrame` class of `pandas` also supports vectorization well:
+```{python}
+#| warning: false
+#| label: tbl-index-returns
+#| tbl-cap: "Daily Returns of 3 Stock Indexes in June, 2025"
+
+tickers = ["^GSPC", "^DJI", "^IXIC"]
+indexes = {
+  "^GSPC": "SP500",
+  "^DJI": "DJ30",
+  "^IXIC": "NSDQ"
+}
+
+df = yf.download(tickers, start="2025-05-30", end="2025-06-30", progress=False)
+
+rtn = df["Close"].pct_change().dropna().rename(columns=indexes)
+
+rtn
+```
+
+```{python}
+rtn.mean()
+```
+
+```{python}
+#| warning: false
+#| label: tbl-index-return-special
+#| tbl-cap: "Days with Returns of DJ30 and SP500 Are Both Better Than NSDQ in June, 2025"
+rtn[(rtn["DJ30"] > rtn["NSDQ"]) & (rtn["SP500"] > rtn["NSDQ"])]
+```
 
 # Applications in Backtestings
