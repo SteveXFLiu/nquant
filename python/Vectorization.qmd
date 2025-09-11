@@ -99,6 +99,20 @@ We also use `yfinance` package to download some data:
 import yfinance as yf
 ```
 
+To plot some data, we define the style of our plottings:
+```{python}
+import matplotlib.pyplot as plt
+
+# Set plt style
+plt.rcParams['font.family'] = 'Palatino'
+plt.rcParams['font.size'] = 8
+plt.rcParams['axes.labelsize'] = 8
+plt.rcParams['xtick.labelsize'] = 8
+plt.rcParams['ytick.labelsize'] = 8
+plt.rcParams['lines.linewidth'] = 1
+plt.rcParams["axes.xmargin"] = 0
+```
+
 # Vectorization with `NumPy`
 The `ndarray` class of `NumPy` supports vectorization as desired:
 ```{python}
@@ -174,3 +188,29 @@ rtn[(rtn["DJ30"] > rtn["NSDQ"]) & (rtn["SP500"] > rtn["NSDQ"])]
 ```
 
 # Applications in Backtestings
+## Strategies Based on Simple Moving Averages
+Simple moving averages (SMAs) can be obtained with the `rolling()` and `mean()` methods.We use the SP500 index as an example:
+```{python}
+#| warning: false
+#| label: tbl-sp500-sma
+#| tbl-cap: "Daily Close Prices and SMAs of SP500 Index (2015-2025)"
+
+sp500 = yf.Ticker("^GSPC")
+raw = sp500.history(start="2014-09-30", end="2025-06-30")
+
+raw["SMA20"] = raw["Close"].rolling(20).mean()
+raw["SMA60"] = raw["Close"].rolling(60).mean()
+raw["SMA180"] = raw["Close"].rolling(180).mean()
+
+data = raw[["Close", "SMA20", "SMA60", "SMA180"]]["2014-12-31":].dropna()
+
+data.round(2)
+```
+
+```{python}
+#| warning: false
+#| label: fig-sp500-sma
+#| fig-cap: "Daily Close Prices and SMAs of SP500 Index (2015-2025)"
+
+data.plot()
+```
